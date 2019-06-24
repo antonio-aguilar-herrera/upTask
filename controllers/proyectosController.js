@@ -1,3 +1,5 @@
+const Proyectos = require('../models/Proyectos');
+
 exports.proyectosHome = (req, res) => {
     res.render('index', {
         nombrePagina: 'Proyectos'
@@ -11,5 +13,25 @@ exports.formularioProyecto = (req, res) => {
 }
 
 exports.nuevoProyecto = (req, res) => {
-    res.send('Enviaste el formulario');
+    const {nombre} = req.body;
+    let errores = [];
+
+    if(!nombre) {
+        errores.push({'texto': 'Agregar un nombre al proyecto'})
+    }
+
+    if (errores.length > 0) {
+        res.render('nuevoProyecto', {
+            nombrePagina: 'Nuevo proyecto',
+            errores
+        })
+    } else {
+        Proyectos.create({nombre})
+            .then(() => {
+                console.log('Insertado Correctamente')
+            })
+            .catch(err => {
+                console.log(err);
+            })
+    }
 }
